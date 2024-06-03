@@ -3,12 +3,14 @@ import {
   Link,
   Links,
   Meta,
+  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
   json,
   redirect,
   useLoaderData,
+  useNavigation,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 //VITE will create a static .css file. ?url imports the url of this statick file
@@ -38,6 +40,7 @@ export const action = async () => {
 export default function App() {
   //The type is automatically inferred
   const { contacts } = useLoaderData<typeof loader>();
+  const navigation = useNavigation();
 
   return (
     <html lang="en">
@@ -70,16 +73,24 @@ export default function App() {
               <ul>
                 {contacts.map((contact) => (
                   <li key={contact.id}>
-                    <Link to={`contacts/${contact.id}`}>
-                      {contact.first || contact.last ? (
-                        <>
-                          {contact.first} {contact.last}
-                        </>
-                      ) : (
-                        <i>No Name</i>
-                      )}{" "}
-                      {contact.favorite ? <span>★</span> : null}
-                    </Link>
+                    {/** NavLink sets the class active if we navigated to contacts */}
+                    <NavLink
+                      className={({ isActive, isPending }) =>
+                        isActive ? "active" : isPending ? "pending" : ""
+                      }
+                      to={`contacts/${contact.id}`}
+                    >
+                      <Link to={`contacts/${contact.id}`}>
+                        {contact.first || contact.last ? (
+                          <>
+                            {contact.first} {contact.last}
+                          </>
+                        ) : (
+                          <i>No Name</i>
+                        )}{" "}
+                        {contact.favorite ? <span>★</span> : null}
+                      </Link>
+                    </NavLink>
                   </li>
                 ))}
               </ul>
@@ -91,7 +102,10 @@ export default function App() {
           </nav>
         </div>
 
-        <div id="detail">
+        <div
+          className={navigation.state === "loading" ? "loading" : ""}
+          id="detail"
+        >
           <Outlet />
         </div>
         <ScrollRestoration />
