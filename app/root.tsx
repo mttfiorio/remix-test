@@ -12,7 +12,7 @@ import {
 import type { LinksFunction } from "@remix-run/node";
 //VITE will create a static .css file. ?url imports the url of this statick file
 import appStylesHref from "./app.css?url";
-import { getContacts } from "./data";
+import { createEmptyContact, getContacts } from "./data";
 
 //This function applies the stylesheet to the links
 export const links: LinksFunction = () => [
@@ -22,6 +22,11 @@ export const links: LinksFunction = () => [
 export const loader = async () => {
   const contacts = await getContacts();
   return json({ contacts });
+};
+
+export const action = async () => {
+  const contact = await createEmptyContact();
+  return json({ contact });
 };
 
 export default function App() {
