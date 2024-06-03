@@ -7,6 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
   json,
+  redirect,
   useLoaderData,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
@@ -24,9 +25,14 @@ export const loader = async () => {
   return json({ contacts });
 };
 
+/** action is magic. Because magic is never confusing right?
+ *
+ * <Form> prevents the browser from sending the request to the server and sends
+ * it to your route's action function instead with fetch.
+ */
 export const action = async () => {
   const contact = await createEmptyContact();
-  return json({ contact });
+  return redirect(`/contacts/${contact.id}/edit`);
 };
 
 export default function App() {
