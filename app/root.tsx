@@ -5,6 +5,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import type { LinksFunction } from "@remix-run/node";
+//VITE will create a static .css file. ?url imports the url of this statick file
+import appStylesHref from "./app.css?url";
+
+//This function applies the stylesheet to the links
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: appStylesHref },
+];
 
 export default function App() {
   return (
