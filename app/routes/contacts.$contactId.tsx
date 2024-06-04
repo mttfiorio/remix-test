@@ -1,5 +1,5 @@
 import { Form, json, useLoaderData } from "@remix-run/react";
-import type { FunctionComponent } from "react";
+import { useEffect, useState, type FunctionComponent } from "react";
 
 import { getContact, type ContactRecord } from "../data";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -20,14 +20,41 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export default function Contact() {
   const { contact } = useLoaderData<typeof loader>();
+  // The image is loaded by the browser
+  const [isLoading, setIsLoading] = useState(true);
+  // This component is probably reused instead of mount every time.
+  // Using Outlet does not allow direct control over mounting
+  useEffect(() => {
+    setIsLoading(true);
+  }, [contact.avatar]);
 
   return (
     <div id="contact">
       <div>
+        {isLoading && (
+          <div
+            className="spinner"
+            style={{
+              width: "192px",
+              height: "192px",
+              color: "black",
+              backgroundColor: "#e3e3e3",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "1.5rem",
+              marginRight: "32px",
+            }}
+          >
+            Loading...
+          </div>
+        )}
         <img
           alt={`${contact.first} ${contact.last} avatar`}
           key={contact.avatar}
           src={contact.avatar}
+          onLoad={() => setIsLoading(false)}
+          style={{ display: isLoading ? "none" : "block" }}
         />
       </div>
 
